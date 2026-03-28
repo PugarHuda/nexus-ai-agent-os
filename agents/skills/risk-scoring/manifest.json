@@ -1,0 +1,30 @@
+{
+  "name": "Risk Scoring",
+  "version": "1.0.0",
+  "description": "Evaluates risk level of DeFi protocols, smart contracts, or investment opportunities. Returns risk score with detailed breakdown.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "target": { "type": "string", "description": "Protocol name, contract address, or description" },
+      "type": { "type": "string", "enum": ["protocol", "contract", "investment"], "default": "protocol" },
+      "additionalContext": { "type": "string" }
+    },
+    "required": ["target"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "riskScore": { "type": "number", "minimum": 0, "maximum": 100 },
+      "riskLevel": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+      "factors": { "type": "array", "items": { "type": "object" } },
+      "recommendation": { "type": "string" }
+    }
+  },
+  "pricing": {
+    "perUse": "0.005",
+    "subscription": "0.5",
+    "currency": "0G"
+  },
+  "model": "deepseek-chat-v3-0324",
+  "category": "defi"
+}

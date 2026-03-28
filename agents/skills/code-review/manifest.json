@@ -1,0 +1,30 @@
+{
+  "name": "Code Review",
+  "version": "1.0.0",
+  "description": "Automated code review for Solidity smart contracts and TypeScript. Detects bugs, security vulnerabilities, gas optimizations.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "code": { "type": "string", "description": "Source code to review" },
+      "language": { "type": "string", "enum": ["solidity", "typescript", "python"], "default": "solidity" },
+      "focus": { "type": "string", "enum": ["security", "gas", "bugs", "all"], "default": "all" }
+    },
+    "required": ["code"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "issues": { "type": "array", "items": { "type": "object" } },
+      "severity": { "type": "string", "enum": ["clean", "low", "medium", "high", "critical"] },
+      "suggestions": { "type": "array", "items": { "type": "string" } },
+      "gasOptimizations": { "type": "array", "items": { "type": "string" } }
+    }
+  },
+  "pricing": {
+    "perUse": "0.01",
+    "subscription": "1.0",
+    "currency": "0G"
+  },
+  "model": "gpt-oss-120b",
+  "category": "development"
+}
