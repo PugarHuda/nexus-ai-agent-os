@@ -3,11 +3,14 @@
 ## Hackathon Context
 - **Hackathon:** 0G APAC Hackathon 2026
 - **Track:** Track 1 — Agentic Infrastructure & OpenClaw Lab
-- **Prize Pool:** $150,000 USD (1st: $45K, 2nd: $35K, 3rd: $20K)
 - **Deadline:** May 9, 2026, 23:59 UTC+8
-- **Network:** 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai)
-- **0G Components:** Chain, Storage, Compute, DA, Agent ID (ERC-7857), AI Alignment
-- **Judging:** 0G Integration Depth, Technical Completeness, Product Value, UX/Demo Quality, Documentation
+- **Network:** 0G Galileo Testnet (Chain ID: 16602)
+- **Tests:** 29 passing
+- **Deployed:** All 4 contracts live on Galileo Testnet
+  - NexusAgentINFT: `0x0e8e941c363dc1C06DD0bC02395B775dE94B48a4`
+  - SkillRegistry: `0xF24C4B0f45a46E2d761770BA75e147DEb738d3A6`
+  - ReputationEngine: `0x465291f35A3DC723B81349CBeBB296Cbf57AAAa3`
+  - AgentEscrow: `0x66f6f49B80d4F705AB1b8Fe8E6b2cA51846EBDE8`
 
 ## Konteks untuk AI Collaborator
 

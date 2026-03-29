@@ -1,13 +1,19 @@
-# frontend/ — Next.js Dashboard
+# frontend/ — Next.js Pixel Dashboard
 
 ## Hackathon Context
 - **Hackathon:** 0G APAC Hackathon 2026
 - **Track:** Track 1 — Agentic Infrastructure & OpenClaw Lab
-- **Prize Pool:** $150,000 USD (1st: $45K, 2nd: $35K, 3rd: $20K)
 - **Deadline:** May 9, 2026, 23:59 UTC+8
-- **Network:** 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai)
-- **0G Components:** Chain, Storage, Compute, DA, Agent ID (ERC-7857), AI Alignment
-- **Judging:** 0G Integration Depth, Technical Completeness, Product Value, UX/Demo Quality, Documentation
+- **Live URL:** https://frontend-pi-one-48.vercel.app
+- **Backend API:** https://backend-inky-theta-62.vercel.app
+
+## Design System
+- **Theme:** Pixel art / retro 8-bit
+- **Font:** Press Start 2P (Google Fonts)
+- **Mascot:** Nex the Robot Fox (24x24 pixel art, 3 variants)
+- **Colors:** Orange (fox/primary), Indigo (tech), Green (verification), Yellow (skills)
+- **Components:** PixelCard, PixelButton, NexMascot, PixelHero3D, PixelToast, ReputationRadar
+- **All data fetched from on-chain** — no hardcoded mockups
 
 ## Konteks untuk AI Collaborator
 

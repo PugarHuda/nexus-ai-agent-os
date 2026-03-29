@@ -8,15 +8,15 @@
 - [x] Short summary: what it does, problem solved, 0G components used
 
 ### 2. Code Repository ✅
-- [x] GitHub repository link (public)
+- [x] GitHub repository link (public): https://github.com/PugarHuda/nexus-ai-agent-os
 - [x] Substantial development progress during hackathon
 - [x] Meaningful commits (not placeholder)
 
-### 3. 0G Integration Proof ⬜ (after deploy)
-- [ ] 0G mainnet/testnet contract address
-- [ ] 0G Explorer link showing on-chain activity
-- [ ] Clear proof of 0G component integration:
-  - [x] 0G Chain: 4 contracts deployed (NexusAgentINFT, SkillRegistry, ReputationEngine, AgentEscrow)
+### 3. 0G Integration Proof ✅
+- [x] 0G testnet contract addresses (4 contracts on Galileo)
+- [x] 0G Explorer: https://chainscan-galileo.0g.ai
+- [x] Clear proof of 0G component integration:
+  - [x] 0G Chain: 4 contracts deployed and verified
   - [x] 0G Storage: agent metadata + skill weights uploaded via @0gfoundation/0g-ts-sdk
   - [x] 0G Compute: inference calls with TeeML verification via @0glabs/0g-serving-broker
   - [x] Agent ID (ERC-7857): INFT minting, clone, authorizeUsage — all implemented
@@ -49,9 +49,11 @@
 ### 7. Optional Bonus Materials
 - [x] Architecture documentation
 - [ ] Pitch deck / slides
-- [ ] Frontend demo link
+- [x] Frontend demo link: https://frontend-pi-one-48.vercel.app
 - [x] Technical write-up (0G integration details)
 - [x] 29 passing tests
+- [x] Pixel art UI with Nex robot fox mascot
+- [x] CONTEXT.md in every folder (27 files)
 
 ## Deployment Steps
 
