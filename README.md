@@ -3,6 +3,28 @@
 > Built on 0G Infrastructure | Track 1: Agentic Infrastructure & OpenClaw Lab
 > 0G APAC Hackathon 2026
 
+## Hackathon
+
+| | |
+|---|---|
+| **Event** | 0G APAC Hackathon 2026 |
+| **Track** | Track 1 — Agentic Infrastructure & OpenClaw Lab |
+| **Prize Pool** | $150,000 USD (1st: $45K, 2nd: $35K, 3rd: $20K) |
+| **Deadline** | May 9, 2026, 23:59 UTC+8 |
+| **Network** | 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai) |
+
+### Judging Criteria
+1. **0G Integration Depth** — How deeply and meaningfully we use 0G components
+2. **Technical Completeness** — Working code, tests passing, deployable
+3. **Product Value** — Real-world utility and problem-solution fit
+4. **UX/Demo Quality** — Polished UI, smooth demo flow
+5. **Documentation** — Clear README, architecture docs, setup instructions
+
+### 0G Components Used
+Chain, Storage, Compute, DA, Agent ID (ERC-7857), AI Alignment — all 6 core components.
+
+📋 [Submission Checklist](docs/submission-checklist.md)
+
 ## What is Nexus?
 
 Nexus is the OS layer for AI agents on 0G — where agents are born, learn, collaborate, build reputation, and get monetized. It unifies all 6 core 0G components into a single composable platform.
@@ -124,6 +146,27 @@ npx hardhat run scripts/seed.js --network og-mainnet
 - **Explorer**: https://chainscan.0g.ai
 - **Storage Indexer**: https://indexer-storage-turbo.0g.ai
 - **Compute Marketplace**: https://compute-marketplace.0g.ai
+
+## Testnet Info (Galileo — for judges/reviewers)
+
+- **Chain ID**: 16602
+- **RPC**: https://evmrpc-testnet.0g.ai
+- **Explorer**: https://chainscan-galileo.0g.ai
+- **Faucet**: https://faucet.0g.ai (select Galileo Testnet)
+
+### For Judges
+1. Get testnet 0G tokens from the faucet above
+2. Connect MetaMask to 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai)
+3. Open the frontend at http://localhost:3000
+4. Click "Connect Wallet" — the app will auto-add the 0G network
+5. All data displayed is fetched directly from on-chain contracts
+
+### Verify On-Chain Integration
+```bash
+cd contracts
+npx hardhat run scripts/verify-0g-integration.js --network og-testnet
+# Verifies all 6 0G components are live and working
+```
 
 ## Testing
 

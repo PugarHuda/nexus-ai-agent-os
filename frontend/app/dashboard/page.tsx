@@ -1,29 +1,83 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import PixelCard from "@/components/PixelCard";
+import PixelButton from "@/components/PixelButton";
+import { getStats, listAgents, listSkills } from "@/lib/api";
+
+interface DashboardStats {
+  totalAgents: number;
+  totalSkills: number;
+  activeSkills: number;
+  network: string;
+}
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats>({ totalAgents: 0, totalSkills: 0, activeSkills: 0, network: "—" });
+  const [recentAgents, setRecentAgents] = useState<Array<{ id: number; skills: number }>>([]);
+  const [recentSkills, setRecentSkills] = useState<Array<{ id: number; name: string; totalUses: string }>>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  async function loadDashboard() {
+    setLoading(true);
+    try {
+      const [statsRes, agentsRes, skillsRes] = await Promise.all([
+        getStats().catch(() => ({ totalAgents: "0", totalSkills: "0", activeSkills: "0", network: "offline", chainId: 0 })),
+        listAgents().catch(() => ({ success: false, agents: [] })),
+        listSkills().catch(() => ({ success: false, skills: [] })),
+      ]);
+
+      setStats({
+        totalAgents: Number(statsRes.totalAgents),
+        totalSkills: Number(statsRes.totalSkills),
+        activeSkills: Number(statsRes.activeSkills),
+        network: statsRes.network,
+      });
+
+      setRecentAgents(
+        agentsRes.agents.slice(-3).reverse().map((a) => ({ id: a.id, skills: a.skills.length }))
+      );
+
+      setRecentSkills(
+        skillsRes.skills.slice(-3).reverse().map((s) => ({ id: s.id, name: s.name, totalUses: s.totalUses }))
+      );
+    } catch (err) {
+      console.error("Dashboard load failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gray-950 text-white">
       <Navbar />
 
       {/* Stats Grid */}
       <section className="max-w-7xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-pixel text-[14px] text-indigo-400">PLATFORM STATS <span className="font-pixel text-[8px] text-gray-500">(ON-CHAIN)</span></h2>
+          <PixelButton onClick={loadDashboard} variant="secondary">↻ REFRESH</PixelButton>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
-            { label: "Active Agents", value: "3", icon: "🤖" },
-            { label: "Skills Available", value: "3", icon: "⚡" },
-            { label: "Tasks Completed", value: "0", icon: "✅" },
-            { label: "Total Revenue", value: "0 0G", icon: "💰" },
+            { label: "ACTIVE AGENTS", value: loading ? "..." : stats.totalAgents.toString(), icon: "🤖", color: "border-indigo-500" },
+            { label: "SKILLS AVAILABLE", value: loading ? "..." : stats.totalSkills.toString(), icon: "⚡", color: "border-yellow-500" },
+            { label: "ACTIVE SKILLS", value: loading ? "..." : stats.activeSkills.toString(), icon: "✅", color: "border-green-500" },
+            { label: "NETWORK", value: loading ? "..." : stats.network, icon: "⛓️", color: "border-indigo-500" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <PixelCard key={stat.label} borderColor={stat.color} className="pixel-shadow">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400 text-sm">{stat.label}</span>
+                <span className="font-pixel text-[6px] text-gray-400 uppercase">{stat.label}</span>
                 <span className="text-xl">{stat.icon}</span>
               </div>
-              <p className="text-2xl font-bold">{stat.value}</p>
-            </div>
+              <p className="font-pixel text-[16px] text-white">{stat.value}</p>
+            </PixelCard>
           ))}
         </div>
       </section>
@@ -32,95 +86,98 @@ export default function DashboardPage() {
       <section className="max-w-7xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Agents */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <h2 className="text-lg font-semibold mb-4">Recent Agents</h2>
+          <PixelCard borderColor="border-indigo-500" className="pixel-shadow">
+            <h2 className="font-pixel text-[10px] text-indigo-400 mb-4">RECENT AGENTS <span className="font-pixel text-[6px] text-gray-500">(ON-CHAIN)</span></h2>
             <div className="space-y-3">
-              {[
-                { id: 1, name: "Nexus Analyst", model: "deepseek-v3" },
-                { id: 2, name: "Nexus Coder", model: "gpt-oss-120b" },
-                { id: 3, name: "Nexus Coordinator", model: "deepseek-v3" },
-              ].map((agent) => (
-                <Link
-                  key={agent.id}
-                  href={`/agents/${agent.id}`}
-                  className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{agent.name}</p>
-                    <p className="text-xs text-gray-500">#{agent.id} · {agent.model}</p>
-                  </div>
-                  <span className="text-xs text-gray-600">→</span>
-                </Link>
-              ))}
+              {loading ? (
+                <p className="font-pixel text-[8px] text-gray-500 animate-pulse">LOADING FROM CHAIN...</p>
+              ) : recentAgents.length === 0 ? (
+                <p className="font-pixel text-[8px] text-gray-500">NO AGENTS MINTED YET</p>
+              ) : (
+                recentAgents.map((agent) => (
+                  <Link
+                    key={agent.id}
+                    href={`/agents/${agent.id}`}
+                    className="flex items-center justify-between p-3 bg-gray-800/50 border-2 border-gray-700 hover:border-indigo-500/50 hover:bg-gray-800 transition-colors"
+                  >
+                    <div>
+                      <p className="font-pixel text-[8px] text-white">AGENT #{agent.id}</p>
+                      <p className="font-pixel text-[6px] text-gray-500 mt-1">INFT #{agent.id} · {agent.skills} SKILLS</p>
+                    </div>
+                    <span className="font-pixel text-[8px] text-gray-600">→</span>
+                  </Link>
+                ))
+              )}
             </div>
-            <Link href="/agents/create" className="mt-4 block text-center bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 px-4 py-2 rounded-lg text-sm transition-colors">
-              + Create Agent
+            <Link href="/agents/create" className="mt-4 block text-center bg-indigo-600/20 border-2 border-indigo-500/30 text-indigo-400 hover:bg-indigo-600/30 px-4 py-2 font-pixel text-[8px] transition-colors">
+              + CREATE AGENT
             </Link>
-          </div>
+          </PixelCard>
 
           {/* Skill Marketplace Preview */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <h2 className="text-lg font-semibold mb-4">Popular Skills</h2>
+          <PixelCard borderColor="border-yellow-500" className="pixel-shadow">
+            <h2 className="font-pixel text-[10px] text-yellow-400 mb-4">SKILLS <span className="font-pixel text-[6px] text-gray-500">(ON-CHAIN)</span></h2>
             <div className="space-y-3">
-              {[
-                { name: "Sentiment Analysis", uses: 0, price: "0.001 0G" },
-                { name: "Risk Scoring", uses: 0, price: "0.005 0G" },
-                { name: "Code Review", uses: 0, price: "0.01 0G" },
-              ].map((skill) => (
-                <div key={skill.name} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium">{skill.name}</p>
-                    <p className="text-xs text-gray-500">{skill.uses} uses</p>
+              {loading ? (
+                <p className="font-pixel text-[8px] text-gray-500 animate-pulse">LOADING FROM CHAIN...</p>
+              ) : recentSkills.length === 0 ? (
+                <p className="font-pixel text-[8px] text-gray-500">NO SKILLS CREATED YET</p>
+              ) : (
+                recentSkills.map((skill) => (
+                  <div key={skill.id} className="flex items-center justify-between p-3 bg-gray-800/50 border-2 border-gray-700">
+                    <div>
+                      <p className="font-pixel text-[8px] text-white">{skill.name.toUpperCase()}</p>
+                      <p className="font-pixel text-[6px] text-gray-500 mt-1">INFT #{skill.id} · {skill.totalUses} USES</p>
+                    </div>
                   </div>
-                  <span className="text-xs text-green-400">{skill.price}</span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
-            <Link href="/skills" className="mt-4 block text-center text-gray-400 hover:text-white text-sm transition-colors">
-              View All Skills →
+            <Link href="/skills" className="mt-4 block text-center font-pixel text-[8px] text-gray-400 hover:text-white transition-colors">
+              VIEW ALL SKILLS →
             </Link>
-          </div>
+          </PixelCard>
 
           {/* Quick Actions */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <PixelCard borderColor="border-green-500" className="pixel-shadow">
+            <h2 className="font-pixel text-[10px] text-green-400 mb-4">QUICK ACTIONS</h2>
             <div className="space-y-2">
-              <Link href="/agents/create" className="block w-full bg-indigo-600 hover:bg-indigo-700 px-4 py-3 rounded-lg text-sm font-medium text-center transition-colors">
-                🤖 Create Agent
+              <Link href="/agents/create" className="block w-full bg-indigo-600 hover:bg-indigo-500 border-2 border-indigo-400 px-4 py-3 font-pixel text-[8px] text-center transition-colors pixel-shadow">
+                🤖 CREATE AGENT
               </Link>
-              <Link href="/skills" className="block w-full bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium text-center transition-colors">
-                ⚡ Browse Skills
+              <Link href="/skills" className="block w-full bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 px-4 py-3 font-pixel text-[8px] text-center transition-colors">
+                ⚡ BROWSE SKILLS
               </Link>
-              <Link href="/interact" className="block w-full bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium text-center transition-colors">
-                💬 Chat with Agent
+              <Link href="/interact" className="block w-full bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 px-4 py-3 font-pixel text-[8px] text-center transition-colors">
+                💬 CHAT WITH AGENT
               </Link>
-              <Link href="/tasks" className="block w-full bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium text-center transition-colors">
-                📋 Create Task
+              <Link href="/tasks" className="block w-full bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 px-4 py-3 font-pixel text-[8px] text-center transition-colors">
+                📋 CREATE TASK
               </Link>
-              <Link href="/leaderboard" className="block w-full bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium text-center transition-colors">
-                🏆 Leaderboard
+              <Link href="/leaderboard" className="block w-full bg-gray-800 hover:bg-gray-700 border-2 border-gray-600 px-4 py-3 font-pixel text-[8px] text-center transition-colors">
+                🏆 LEADERBOARD
               </Link>
             </div>
-          </div>
+          </PixelCard>
         </div>
       </section>
 
       {/* 0G Integration Banner */}
       <section className="max-w-7xl mx-auto px-6 pb-8">
-        <div className="bg-gradient-to-r from-indigo-950 to-purple-950 border border-indigo-800/30 rounded-xl p-6">
-          <h3 className="text-sm font-semibold mb-3">Powered by 0G Infrastructure</h3>
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-xs">
+        <div className="bg-gradient-to-r from-indigo-950 to-purple-950 border-2 border-indigo-500/30 p-6 pixel-shadow">
+          <h3 className="font-pixel text-[10px] text-indigo-400 mb-3">POWERED BY 0G INFRASTRUCTURE</h3>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
             {[
-              { name: "0G Chain", desc: "Smart contracts" },
-              { name: "0G Storage", desc: "Agent memory" },
-              { name: "0G Compute", desc: "TeeML inference" },
+              { name: "0G CHAIN", desc: "Smart contracts" },
+              { name: "0G STORAGE", desc: "Agent memory" },
+              { name: "0G COMPUTE", desc: "TeeML inference" },
               { name: "0G DA", desc: "Action proofs" },
-              { name: "Agent ID", desc: "ERC-7857 INFT" },
-              { name: "Alignment", desc: "Safety monitor" },
+              { name: "AGENT ID", desc: "ERC-7857 INFT" },
+              { name: "ALIGNMENT", desc: "Safety monitor" },
             ].map((c) => (
-              <div key={c.name} className="bg-black/20 rounded-lg p-2 text-center">
-                <p className="text-indigo-400 font-medium">{c.name}</p>
-                <p className="text-gray-500 text-[10px]">{c.desc}</p>
+              <div key={c.name} className="bg-black/20 border-2 border-indigo-500/20 p-2 text-center">
+                <p className="font-pixel text-[6px] text-indigo-400">{c.name}</p>
+                <p className="font-pixel text-[6px] text-gray-500 mt-1">{c.desc}</p>
               </div>
             ))}
           </div>

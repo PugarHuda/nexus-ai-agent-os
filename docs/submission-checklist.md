@@ -13,15 +13,15 @@
 - [x] Meaningful commits (not placeholder)
 
 ### 3. 0G Integration Proof ⬜ (after deploy)
-- [ ] 0G mainnet contract address
+- [ ] 0G mainnet/testnet contract address
 - [ ] 0G Explorer link showing on-chain activity
 - [ ] Clear proof of 0G component integration:
-  - [ ] 0G Chain: 4 contracts deployed
-  - [ ] 0G Storage: agent metadata + skill weights uploaded
-  - [ ] 0G Compute: inference calls with TeeML verification
-  - [ ] Agent ID (ERC-7857): INFT minting, clone, authorizeUsage
-  - [ ] 0G DA: action proofs posted (via Storage Log Layer)
-  - [ ] AI Alignment: safety monitoring service
+  - [x] 0G Chain: 4 contracts deployed (NexusAgentINFT, SkillRegistry, ReputationEngine, AgentEscrow)
+  - [x] 0G Storage: agent metadata + skill weights uploaded via @0gfoundation/0g-ts-sdk
+  - [x] 0G Compute: inference calls with TeeML verification via @0glabs/0g-serving-broker
+  - [x] Agent ID (ERC-7857): INFT minting, clone, authorizeUsage — all implemented
+  - [x] 0G DA: action proofs posted via Storage Log Layer (immutable)
+  - [x] AI Alignment: safety monitoring service with drift detection
 
 ### 4. Demo Video ⬜
 - [ ] ≤3 minutes
@@ -37,7 +37,8 @@
 - [x] 0G modules explanation (`docs/0g-integration.md`)
 - [x] How modules support the product
 - [x] Local deployment steps
-- [ ] Test account details / faucet instructions (add after deploy)
+- [x] Test account details / faucet instructions
+- [x] API reference (`docs/api-reference.md`)
 
 ### 6. Public X Post ⬜
 - [ ] Project name

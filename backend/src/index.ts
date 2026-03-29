@@ -5,12 +5,12 @@
  * Connects to 0G Chain, Storage, Compute, and DA.
  */
 
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import routes from "./api/routes";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,10 +38,11 @@ app.get("/", (_req, res) => {
 });
 
 app.listen(PORT, () => {
+  const isTestnet = process.env.OG_RPC_URL?.includes("testnet");
   console.log(`
   ╔══════════════════════════════════════════╗
   ║   Nexus AI Agent OS — Backend Server     ║
-  ║   Network: 0G Mainnet (16661)            ║
+  ║   Network: ${isTestnet ? "0G Galileo Testnet" : "0G Mainnet (16661)"}${isTestnet ? "       " : ""}║
   ║   Port: ${PORT}                              ║
   ╚══════════════════════════════════════════╝
   `);

@@ -26,6 +26,7 @@ export async function mintAgent(data: {
 export async function getAgent(id: number) {
   return fetchAPI<{
     id: number;
+    owner: string;
     encryptedURI: string;
     metadataHash: string;
     createdAt: string;
@@ -40,6 +41,30 @@ export async function getAgent(id: number) {
       compositeScore: string;
     };
   }>(`/agents/${id}`);
+}
+
+/** List all agents from on-chain */
+export async function listAgents() {
+  return fetchAPI<{
+    success: boolean;
+    agents: Array<{
+      id: number;
+      owner: string;
+      encryptedURI: string;
+      metadataHash: string;
+      createdAt: string;
+      clonedFrom: string;
+      skills: string[];
+      reputation: {
+        accuracy: string;
+        reliability: string;
+        safety: string;
+        collaboration: string;
+        totalActions: string;
+        compositeScore: string;
+      };
+    }>;
+  }>("/agents/list");
 }
 
 // ─── Skills ──────────────────────────────────────────────
@@ -61,6 +86,24 @@ export async function createSkill(data: {
 
 export async function getSkill(id: number) {
   return fetchAPI(`/skills/${id}`);
+}
+
+/** List all skills from on-chain */
+export async function listSkills() {
+  return fetchAPI<{
+    success: boolean;
+    skills: Array<{
+      id: number;
+      name: string;
+      description: string;
+      creator: string;
+      pricePerUse: string;
+      subscriptionPrice: string;
+      totalUses: string;
+      totalRevenue: string;
+      active: boolean;
+    }>;
+  }>("/skills/list");
 }
 
 // ─── Inference ───────────────────────────────────────────
@@ -96,8 +139,83 @@ export async function createTask(data: {
   });
 }
 
+/** List all tasks from on-chain */
+export async function listTasks() {
+  return fetchAPI<{
+    success: boolean;
+    tasks: Array<{
+      id: number;
+      requester: string;
+      agentId: number;
+      agentOwner: string;
+      payment: string;
+      description: string;
+      status: number;
+      createdAt: string;
+    }>;
+  }>("/tasks/list");
+}
+
 // ─── Health ──────────────────────────────────────────────
 
 export async function getHealth() {
   return fetchAPI<{ status: string; network: string; chainId: number }>("/health");
+}
+
+// ─── Stats ───────────────────────────────────────────────
+
+export async function getStats() {
+  return fetchAPI<{
+    totalAgents: string;
+    totalSkills: string;
+    activeSkills: string;
+    network: string;
+    chainId: number;
+  }>("/stats");
+}
+
+// ─── Leaderboard ─────────────────────────────────────────
+
+/** Get on-chain reputation leaderboard */
+export async function getLeaderboard() {
+  return fetchAPI<{
+    success: boolean;
+    leaderboard: Array<{
+      agentId: number;
+      owner: string;
+      accuracy: string;
+      reliability: string;
+      safety: string;
+      collaboration: string;
+      totalActions: string;
+      compositeScore: string;
+    }>;
+  }>("/leaderboard");
+}
+
+// ─── Reputation ──────────────────────────────────────────
+
+export async function getReputation(agentId: number) {
+  return fetchAPI<{
+    agentId: number;
+    accuracy: string;
+    reliability: string;
+    safety: string;
+    collaboration: string;
+    totalActions: string;
+    compositeScore: string;
+  }>(`/reputation/${agentId}`);
+}
+
+/** Get on-chain action history (DA proofs) for an agent */
+export async function getActionHistory(agentId: number) {
+  return fetchAPI<{
+    success: boolean;
+    actions: Array<{
+      dimension: number;
+      score: number;
+      daProofHash: string;
+      timestamp: string;
+    }>;
+  }>(`/agents/${agentId}/actions`);
 }

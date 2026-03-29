@@ -1,24 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import PixelCard from "@/components/PixelCard";
+import PixelButton from "@/components/PixelButton";
+import { listAgents } from "@/lib/api";
 
 interface AgentCard {
   id: number;
-  name: string;
-  category: string;
-  model: string;
-  skills: number;
+  owner: string;
+  skills: string[];
   compositeScore: number;
   totalActions: number;
 }
 
-// Placeholder data — replaced by contract reads in production
-const SAMPLE_AGENTS: AgentCard[] = [];
-
 export default function AgentsPage() {
   const [filter, setFilter] = useState("all");
+  const [agents, setAgents] = useState<AgentCard[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadAgents();
+  }, []);
+
+  async function loadAgents() {
+    setLoading(true);
+    try {
+      const res = await listAgents();
+      setAgents(
+        res.agents.map((a) => ({
+          id: a.id,
+          owner: a.owner,
+          skills: a.skills,
+          compositeScore: Number(a.reputation.compositeScore),
+          totalActions: Number(a.reputation.totalActions),
+        }))
+      );
+    } catch (err) {
+      console.error("Failed to load agents from chain:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -27,75 +51,59 @@ export default function AgentsPage() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold">Agent Explorer</h1>
-            <p className="text-gray-400 text-sm mt-1">
-              Browse all AI agents born in Nexus
+            <h1 className="font-pixel text-[16px] text-indigo-400">AGENT EXPLORER</h1>
+            <p className="font-pixel text-[6px] text-gray-400 mt-2">
+              BROWSE ALL AI AGENTS BORN IN NEXUS — DATA FETCHED ON-CHAIN
             </p>
           </div>
-          <Link
-            href="/agents/create"
-            className="bg-nexus-600 hover:bg-nexus-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            + Create Agent
-          </Link>
-        </div>
-
-        {/* Filters */}
-        <div className="flex gap-2 mb-6">
-          {["all", "analysis", "development", "orchestration"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                filter === f
-                  ? "bg-nexus-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:text-white"
-              }`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {/* Agent Grid */}
-        {SAMPLE_AGENTS.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-12 text-center">
-            <div className="text-4xl mb-4">🤖</div>
-            <h2 className="text-lg font-semibold mb-2">No agents yet</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Create your first AI agent to get started. Each agent gets an INFT
-              identity on 0G Chain with encrypted brain stored on 0G Storage.
-            </p>
-            <Link
-              href="/agents/create"
-              className="inline-block bg-nexus-600 hover:bg-nexus-700 px-6 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Create First Agent
+          <div className="flex items-center gap-3">
+            <PixelButton onClick={loadAgents} variant="secondary">↻ REFRESH</PixelButton>
+            <Link href="/agents/create">
+              <PixelButton variant="primary">+ CREATE AGENT</PixelButton>
             </Link>
           </div>
+        </div>
+
+        {/* Loading */}
+        {loading ? (
+          <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
+            <div className="font-pixel text-[16px] mb-3 animate-pixel-pulse">⛓️</div>
+            <p className="font-pixel text-[8px] text-gray-400">READING AGENTS FROM 0G CHAIN...</p>
+          </PixelCard>
+        ) : agents.length === 0 ? (
+          <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
+            <div className="text-4xl mb-4">🤖</div>
+            <h2 className="font-pixel text-[12px] text-white mb-2">NO AGENTS YET</h2>
+            <p className="font-pixel text-[6px] text-gray-400 mb-4">
+              CREATE YOUR FIRST AI AGENT TO GET STARTED. EACH AGENT GETS AN INFT
+              IDENTITY ON 0G CHAIN WITH ENCRYPTED BRAIN STORED ON 0G STORAGE.
+            </p>
+            <Link href="/agents/create">
+              <PixelButton variant="primary">CREATE FIRST AGENT</PixelButton>
+            </Link>
+          </PixelCard>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {SAMPLE_AGENTS.map((agent) => (
-              <Link
-                key={agent.id}
-                href={`/agents/${agent.id}`}
-                className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-nexus-600/50 transition-colors"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs bg-gray-800 px-2 py-0.5 rounded text-gray-400">
-                    #{agent.id}
-                  </span>
-                  <span className="text-xs text-nexus-400">{agent.category}</span>
-                </div>
-                <h3 className="font-semibold mb-1">{agent.name}</h3>
-                <p className="text-xs text-gray-500 mb-3">Model: {agent.model}</p>
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <span>{agent.skills} skills</span>
-                  <span>{agent.totalActions} actions</span>
-                  <span className="text-green-400">
-                    Score: {(agent.compositeScore / 100).toFixed(1)}%
-                  </span>
-                </div>
+            {agents.map((agent) => (
+              <Link key={agent.id} href={`/agents/${agent.id}`}>
+                <PixelCard borderColor="border-gray-700" hover className="pixel-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-pixel text-[6px] bg-gray-800 border-2 border-gray-600 px-2 py-1 text-gray-400">
+                      INFT #{agent.id}
+                    </span>
+                    <span className="font-pixel text-[6px] text-gray-600 font-mono">
+                      {agent.owner.slice(0, 6)}...{agent.owner.slice(-4)}
+                    </span>
+                  </div>
+                  <h3 className="font-pixel text-[10px] text-white mb-1">AGENT #{agent.id}</h3>
+                  <p className="font-pixel text-[6px] text-gray-500 mb-3">{agent.skills.length} SKILLS EQUIPPED</p>
+                  <div className="flex items-center justify-between font-pixel text-[6px] text-gray-400">
+                    <span>{agent.totalActions} ACTIONS</span>
+                    <span className="text-green-400">
+                      SCORE: {(agent.compositeScore / 100).toFixed(1)}%
+                    </span>
+                  </div>
+                </PixelCard>
               </Link>
             ))}
           </div>

@@ -1,8 +1,17 @@
 # contracts/ — Smart Contracts Layer
 
+## Hackathon Context
+- **Hackathon:** 0G APAC Hackathon 2026
+- **Track:** Track 1 — Agentic Infrastructure & OpenClaw Lab
+- **Prize Pool:** $150,000 USD (1st: $45K, 2nd: $35K, 3rd: $20K)
+- **Deadline:** May 9, 2026, 23:59 UTC+8
+- **Network:** 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai)
+- **0G Components:** Chain, Storage, Compute, DA, Agent ID (ERC-7857), AI Alignment
+- **Judging:** 0G Integration Depth, Technical Completeness, Product Value, UX/Demo Quality, Documentation
+
 ## Konteks untuk AI Collaborator
 
-Folder ini berisi semua Solidity smart contracts untuk Nexus, di-deploy ke 0G Mainnet (Chain ID 16661, RPC: https://evmrpc.0g.ai).
+Folder ini berisi semua Solidity smart contracts untuk Nexus, di-deploy ke 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai) untuk hackathon submission, dan 0G Mainnet (Chain ID 16661, RPC: https://evmrpc.0g.ai) untuk production.
 
 ## File-file di folder ini:
 

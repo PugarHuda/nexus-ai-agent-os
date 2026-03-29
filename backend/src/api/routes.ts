@@ -46,6 +46,44 @@ router.post("/agents/mint", async (req: Request, res: Response) => {
   }
 });
 
+/** GET /api/agents/list — List all agents from on-chain */
+router.get("/agents/list", async (_req: Request, res: Response) => {
+  try {
+    const agents = await contracts.listAgents();
+    const repContract = contracts.getReputationContract();
+
+    // Enrich with reputation data
+    const enriched = await Promise.all(
+      agents.map(async (agent) => {
+        try {
+          const rep = await repContract.getReputation(agent.id);
+          const composite = await repContract.getCompositeScore(agent.id);
+          return {
+            ...agent,
+            reputation: {
+              accuracy: rep[0].toString(),
+              reliability: rep[1].toString(),
+              safety: rep[2].toString(),
+              collaboration: rep[3].toString(),
+              totalActions: rep[4].toString(),
+              compositeScore: composite.toString(),
+            },
+          };
+        } catch {
+          return {
+            ...agent,
+            reputation: { accuracy: "0", reliability: "0", safety: "0", collaboration: "0", totalActions: "0", compositeScore: "0" },
+          };
+        }
+      })
+    );
+
+    res.json({ success: true, agents: enriched });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message, agents: [] });
+  }
+});
+
 /** GET /api/agents/:id — Get agent details */
 router.get("/agents/:id", async (req: Request, res: Response) => {
   try {
@@ -100,6 +138,16 @@ router.post("/skills/create", async (req: Request, res: Response) => {
     res.json({ success: true, txHash: result.txHash, storageURI: storageResult.encryptedURI });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/** GET /api/skills/list — List all skills from on-chain */
+router.get("/skills/list", async (_req: Request, res: Response) => {
+  try {
+    const skills = await contracts.listSkills();
+    res.json({ success: true, skills });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message, skills: [] });
   }
 });
 
@@ -185,6 +233,27 @@ router.post("/skills/execute", async (req: Request, res: Response) => {
   }
 });
 
+/** GET /api/leaderboard — On-chain reputation leaderboard */
+router.get("/leaderboard", async (_req: Request, res: Response) => {
+  try {
+    const entries = await contracts.getLeaderboard();
+    res.json({ success: true, leaderboard: entries });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message, leaderboard: [] });
+  }
+});
+
+/** GET /api/agents/:id/actions — On-chain action history (DA proofs) */
+router.get("/agents/:id/actions", async (req: Request, res: Response) => {
+  try {
+    const agentId = parseInt(req.params.id);
+    const actions = await contracts.getActionHistory(agentId);
+    res.json({ success: true, actions });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message, actions: [] });
+  }
+});
+
 /** GET /api/reputation/:agentId — Get agent reputation */
 router.get("/reputation/:agentId", async (req: Request, res: Response) => {
   try {
@@ -210,28 +279,38 @@ router.get("/reputation/:agentId", async (req: Request, res: Response) => {
   }
 });
 
-/** GET /api/stats — Platform statistics */
+/** GET /api/stats — Platform statistics (on-chain) */
 router.get("/stats", async (_req: Request, res: Response) => {
   try {
-    const agentContract = contracts.getAgentContract();
-    const totalAgents = await agentContract.totalSupply();
-
+    const stats = await contracts.getPlatformStats();
     res.json({
-      totalAgents: totalAgents.toString(),
-      network: "0G Mainnet",
-      chainId: 16661,
+      ...stats,
+      network: process.env.OG_RPC_URL?.includes("testnet") ? "0G Galileo Testnet" : "0G Mainnet",
+      chainId: process.env.OG_RPC_URL?.includes("testnet") ? 16602 : 16661,
     });
   } catch (error: any) {
     res.json({
       totalAgents: "0",
-      network: "0G Mainnet",
-      chainId: 16661,
+      totalSkills: "0",
+      activeSkills: "0",
+      network: process.env.OG_RPC_URL?.includes("testnet") ? "0G Galileo Testnet" : "0G Mainnet",
+      chainId: process.env.OG_RPC_URL?.includes("testnet") ? 16602 : 16661,
       note: "Connect contracts to get live data",
     });
   }
 });
 
 // ─── Task/Escrow Endpoints ───────────────────────────────
+
+/** GET /api/tasks/list — List all tasks from on-chain */
+router.get("/tasks/list", async (_req: Request, res: Response) => {
+  try {
+    const tasks = await contracts.listTasks();
+    res.json({ success: true, tasks });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message, tasks: [] });
+  }
+});
 
 /** POST /api/tasks/create — Create a new task with escrow */
 router.post("/tasks/create", async (req: Request, res: Response) => {

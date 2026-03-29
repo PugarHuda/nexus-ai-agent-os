@@ -1,12 +1,15 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import ReputationRadar from "@/components/ReputationRadar";
+import { getLeaderboard } from "@/lib/api";
+import PixelCard from "@/components/PixelCard";
+import PixelButton from "@/components/PixelButton";
 
 interface LeaderboardEntry {
   rank: number;
   agentId: number;
-  name: string;
   compositeScore: number;
   accuracy: number;
   reliability: number;
@@ -16,97 +19,141 @@ interface LeaderboardEntry {
   owner: string;
 }
 
-// Populated from on-chain data in production
-const LEADERBOARD: LeaderboardEntry[] = [];
-
 export default function LeaderboardPage() {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, []);
+
+  async function loadLeaderboard() {
+    setLoading(true);
+    try {
+      const res = await getLeaderboard();
+      setEntries(
+        res.leaderboard.map((e, i) => ({
+          rank: i + 1,
+          agentId: e.agentId,
+          compositeScore: Number(e.compositeScore),
+          accuracy: Number(e.accuracy),
+          reliability: Number(e.reliability),
+          safety: Number(e.safety),
+          collaboration: Number(e.collaboration),
+          totalActions: Number(e.totalActions),
+          owner: e.owner,
+        }))
+      );
+    } catch (err) {
+      console.error("Failed to load leaderboard:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">Reputation Leaderboard</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Top agents ranked by on-chain composite reputation score
-          </p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="font-pixel text-[16px] uppercase tracking-wider">REPUTATION LEADERBOARD</h1>
+            <p className="text-gray-400 font-pixel text-[7px] mt-2">
+              TOP AGENTS RANKED BY ON-CHAIN COMPOSITE REPUTATION SCORE
+            </p>
+          </div>
+          <PixelButton onClick={loadLeaderboard} variant="secondary">
+            ↻ REFRESH
+          </PixelButton>
         </div>
 
         {/* Scoring Explanation */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-6">
-          <h3 className="text-sm font-semibold mb-3">How Reputation Works</h3>
+        <PixelCard borderColor="border-indigo-500/50" className="mb-6 pixel-shadow">
+          <h3 className="font-pixel text-[10px] uppercase mb-4 text-indigo-400">HOW REPUTATION WORKS</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Accuracy", weight: "30%", color: "text-indigo-400", desc: "Output correctness" },
-              { label: "Reliability", weight: "25%", color: "text-green-400", desc: "Consistency & uptime" },
-              { label: "Safety", weight: "30%", color: "text-amber-400", desc: "No harmful behavior" },
-              { label: "Collaboration", weight: "15%", color: "text-pink-400", desc: "Multi-agent success" },
+              { label: "ACCURACY", weight: "30%", color: "text-indigo-400", desc: "Output correctness" },
+              { label: "RELIABILITY", weight: "25%", color: "text-green-400", desc: "Consistency & uptime" },
+              { label: "SAFETY", weight: "30%", color: "text-yellow-400", desc: "No harmful behavior" },
+              { label: "COLLABORATION", weight: "15%", color: "text-pink-400", desc: "Multi-agent success" },
             ].map((dim) => (
               <div key={dim.label} className="text-center">
-                <p className={`text-lg font-bold ${dim.color}`}>{dim.weight}</p>
-                <p className="text-sm font-medium">{dim.label}</p>
-                <p className="text-xs text-gray-500">{dim.desc}</p>
+                <p className={`font-pixel text-[14px] ${dim.color}`}>{dim.weight}</p>
+                <p className="font-pixel text-[8px] mt-1">{dim.label}</p>
+                <p className="font-pixel text-[6px] text-gray-500 mt-1">{dim.desc}</p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-3 text-center">
-            Every score is backed by action proofs on 0G DA — fully auditable and immutable.
+          <p className="font-pixel text-[6px] text-gray-500 mt-4 text-center">
+            EVERY SCORE IS BACKED BY ACTION PROOFS ON 0G DA — FULLY AUDITABLE AND IMMUTABLE.
           </p>
-        </div>
+        </PixelCard>
 
         {/* Leaderboard Table */}
-        {LEADERBOARD.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-12 text-center">
+        {loading ? (
+          <PixelCard borderColor="border-gray-700" className="p-12 text-center">
+            <div className="text-2xl mb-3 animate-pulse">⛓️</div>
+            <p className="font-pixel text-[8px] text-gray-400">READING REPUTATION DATA FROM 0G CHAIN...</p>
+          </PixelCard>
+        ) : entries.length === 0 ? (
+          <PixelCard borderColor="border-gray-700" className="p-12 text-center">
             <div className="text-4xl mb-4">🏆</div>
-            <h2 className="text-lg font-semibold mb-2">Leaderboard is empty</h2>
-            <p className="text-gray-400 text-sm">
-              Agents build reputation through verified actions on 0G Compute.
+            <h2 className="font-pixel text-[12px] uppercase mb-2">LEADERBOARD IS EMPTY</h2>
+            <p className="text-gray-400 font-pixel text-[7px] leading-relaxed">
+              AGENTS BUILD REPUTATION THROUGH VERIFIED ACTIONS ON 0G COMPUTE.
               <br />
-              Create an agent and start interacting to appear here.
+              CREATE AN AGENT AND START INTERACTING TO APPEAR HERE.
             </p>
-          </div>
+          </PixelCard>
         ) : (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <PixelCard borderColor="border-indigo-500/30" className="p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 text-xs text-gray-400">
-                  <th className="px-4 py-3 text-left">Rank</th>
-                  <th className="px-4 py-3 text-left">Agent</th>
-                  <th className="px-4 py-3 text-center">Score</th>
-                  <th className="px-4 py-3 text-center">Accuracy</th>
-                  <th className="px-4 py-3 text-center">Reliability</th>
-                  <th className="px-4 py-3 text-center">Safety</th>
-                  <th className="px-4 py-3 text-center">Collab</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                <tr className="border-b-2 border-gray-700">
+                  <th className="px-4 py-3 text-left font-pixel text-[7px] text-gray-400 uppercase">RANK</th>
+                  <th className="px-4 py-3 text-left font-pixel text-[7px] text-gray-400 uppercase">AGENT</th>
+                  <th className="px-4 py-3 text-center font-pixel text-[7px] text-gray-400 uppercase">SCORE</th>
+                  <th className="px-4 py-3 text-center font-pixel text-[7px] text-gray-400 uppercase">ACCURACY</th>
+                  <th className="px-4 py-3 text-center font-pixel text-[7px] text-gray-400 uppercase">RELIABILITY</th>
+                  <th className="px-4 py-3 text-center font-pixel text-[7px] text-gray-400 uppercase">SAFETY</th>
+                  <th className="px-4 py-3 text-center font-pixel text-[7px] text-gray-400 uppercase">COLLAB</th>
+                  <th className="px-4 py-3 text-right font-pixel text-[7px] text-gray-400 uppercase">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
-                {LEADERBOARD.map((entry) => (
+                {entries.map((entry) => (
                   <tr key={entry.agentId} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="px-4 py-3 text-sm font-bold">
-                      {entry.rank <= 3 ? ["🥇", "🥈", "🥉"][entry.rank - 1] : `#${entry.rank}`}
+                    <td className="px-4 py-3 font-pixel text-[10px]">
+                      {entry.rank <= 3 ? (
+                        <span className={entry.rank === 1 ? "text-yellow-400" : entry.rank === 2 ? "text-gray-300" : "text-amber-600"}>
+                          {["♛ 1ST", "♛ 2ND", "♛ 3RD"][entry.rank - 1]}
+                        </span>
+                      ) : (
+                        `#${entry.rank}`
+                      )}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium">{entry.name}</p>
-                      <p className="text-xs text-gray-500 font-mono">
-                        #{entry.agentId} · {entry.owner.slice(0, 8)}...
+                      <p className="font-pixel text-[8px]">AGENT #{entry.agentId}</p>
+                      <p className="font-mono text-[10px] text-gray-500">
+                        {entry.owner.slice(0, 8)}...{entry.owner.slice(-4)}
                       </p>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-sm font-bold text-nexus-400">
+                      <span className="font-pixel text-[9px] text-indigo-400">
                         {(entry.compositeScore / 100).toFixed(1)}%
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center text-xs">{(entry.accuracy / 100).toFixed(1)}%</td>
-                    <td className="px-4 py-3 text-center text-xs">{(entry.reliability / 100).toFixed(1)}%</td>
-                    <td className="px-4 py-3 text-center text-xs">{(entry.safety / 100).toFixed(1)}%</td>
-                    <td className="px-4 py-3 text-center text-xs">{(entry.collaboration / 100).toFixed(1)}%</td>
-                    <td className="px-4 py-3 text-right text-xs text-gray-400">{entry.totalActions}</td>
+                    <td className="px-4 py-3 text-center font-pixel text-[7px]">{(entry.accuracy / 100).toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-center font-pixel text-[7px]">{(entry.reliability / 100).toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-center font-pixel text-[7px]">{(entry.safety / 100).toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-center font-pixel text-[7px]">{(entry.collaboration / 100).toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-right font-pixel text-[7px] text-gray-400">{entry.totalActions}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </PixelCard>
         )}
       </main>
     </div>

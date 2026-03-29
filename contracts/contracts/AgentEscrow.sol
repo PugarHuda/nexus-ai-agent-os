@@ -180,6 +180,18 @@ contract AgentEscrow is Ownable, ReentrancyGuard {
         return agentTasks[agentId].length;
     }
 
+    function getNextTaskId() external view returns (uint256) {
+        return _nextTaskId;
+    }
+
+    function getUserTasks(address user) external view returns (uint256[] memory) {
+        return userTasks[user];
+    }
+
+    function getAgentTasks(uint256 agentId) external view returns (uint256[] memory) {
+        return agentTasks[agentId];
+    }
+
     // ─── Admin ───────────────────────────────────────────────
     function setDisputePeriod(uint256 newPeriod) external onlyOwner {
         disputePeriod = newPeriod;

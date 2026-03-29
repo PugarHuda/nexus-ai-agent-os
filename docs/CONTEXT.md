@@ -1,5 +1,12 @@
 # docs/ — Architecture & API Documentation
 
+## Hackathon Context
+- **Hackathon:** 0G APAC Hackathon 2026
+- **Track:** Track 1 — Agentic Infrastructure & OpenClaw Lab
+- **Deadline:** May 9, 2026, 23:59 UTC+8
+- **Network:** 0G Galileo Testnet (Chain ID: 16602, RPC: https://evmrpc-testnet.0g.ai)
+- **Judging:** 0G Integration Depth, Technical Completeness, Product Value, UX/Demo Quality, Documentation
+
 ## Konteks untuk AI Collaborator
 
 Folder ini berisi dokumentasi arsitektur, API reference, dan panduan integrasi untuk Nexus.
