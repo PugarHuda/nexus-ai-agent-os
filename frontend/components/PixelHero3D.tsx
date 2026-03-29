@@ -1,109 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import NexMascot from "./NexMascot";
 
 /**
- * 3D Pixel Art Hero — CSS-only 3D with mouse parallax.
- * Renders a floating pixel robot/agent that reacts to mouse movement.
+ * 3D Pixel Art Hero — CSS 3D with mouse parallax.
+ * Features Nex the robot fox mascot floating in 3D space
+ * with orbiting pixel elements.
  */
-
-// Pixel grid for a robot/agent face (16x16)
-const ROBOT_GRID = [
-  "................",
-  "....CCCCCCCC....",
-  "...CCCCCCCCCC...",
-  "..CCCCCCCCCCCC..",
-  "..CC.BBBB.BBCC..",
-  "..CCBBBBBBBBCC..",
-  "..CCBB.BB.BBCC..",
-  "..CCBBBBBBBBCC..",
-  "..CCCC.CC.CCCC..",
-  "..CCCCCCCCCCCC..",
-  "...CCDDDDDDCC..",
-  "....CCCCCCCC....",
-  ".....EEEEEE.....",
-  "....EE.EE.EE....",
-  "...EE..EE..EE...",
-  "................",
-];
-
-const PALETTE: Record<string, string> = {
-  C: "#6366f1", // Indigo body
-  B: "#818cf8", // Light indigo face
-  D: "#22c55e", // Green mouth
-  E: "#a5b4fc", // Light legs
-};
-
-// Shield icon grid
-const SHIELD_GRID = [
-  "........",
-  "..AAAA..",
-  ".AABBAA.",
-  ".ABCCBA.",
-  ".ABCCBA.",
-  ".AABBAA.",
-  "..AAAA..",
-  "...AA...",
-];
-
-const SHIELD_PALETTE: Record<string, string> = {
-  A: "#f59e0b",
-  B: "#fbbf24",
-  C: "#fef3c7",
-};
-
-// Gear icon grid
-const GEAR_GRID = [
-  "..AA.AA..",
-  ".AAAAAAA.",
-  "AABBBBBAA",
-  "AABB.BBAA",
-  ".AABBBAA.",
-  "AABB.BBAA",
-  "AABBBBBAA",
-  ".AAAAAAA.",
-  "..AA.AA..",
-];
-
-const GEAR_PALETTE: Record<string, string> = {
-  A: "#ec4899",
-  B: "#f9a8d4",
-};
-
-function PixelArt({
-  grid,
-  palette,
-  pixelSize = 6,
-  className = "",
-}: {
-  grid: string[];
-  palette: Record<string, string>;
-  pixelSize?: number;
-  className?: string;
-}) {
-  const width = grid[0].length * pixelSize;
-  const height = grid.length * pixelSize;
-
-  return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={className}>
-      {grid.map((row, y) =>
-        row.split("").map((char, x) => {
-          if (char === ".") return null;
-          return (
-            <rect
-              key={`${x}-${y}`}
-              x={x * pixelSize}
-              y={y * pixelSize}
-              width={pixelSize}
-              height={pixelSize}
-              fill={palette[char] || "#fff"}
-            />
-          );
-        })
-      )}
-    </svg>
-  );
-}
 
 export default function PixelHero3D() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,8 +29,8 @@ export default function PixelHero3D() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-[400px] h-[400px] mx-auto" style={{ perspective: "800px" }}>
-      {/* Main robot — center, largest */}
+    <div ref={containerRef} className="relative w-[360px] h-[360px] mx-auto" style={{ perspective: "800px" }}>
+      {/* Main Nex mascot — center */}
       <div
         className="absolute inset-0 flex items-center justify-center transition-transform duration-200 ease-out"
         style={{
@@ -134,89 +38,69 @@ export default function PixelHero3D() {
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
         }}
       >
-        {/* Shadow */}
+        {/* Glow behind Nex */}
         <div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 w-24 h-4 bg-indigo-500/20 rounded-full blur-md"
-          style={{ transform: "translateZ(-40px)" }}
-        />
-
-        {/* Back layer — glow */}
-        <div
-          className="absolute w-32 h-32 bg-indigo-600/20 rounded-full blur-xl animate-pixel-pulse"
+          className="absolute w-40 h-40 bg-indigo-600/15 blur-2xl animate-pixel-pulse"
           style={{ transform: "translateZ(-30px)" }}
         />
 
-        {/* Middle layer — robot */}
+        {/* Shadow */}
         <div
-          className="animate-pixel-float"
-          style={{ transform: "translateZ(20px)" }}
-        >
-          <PixelArt grid={ROBOT_GRID} palette={PALETTE} pixelSize={8} />
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 w-20 h-3 bg-indigo-500/20 blur-md"
+          style={{ transform: "translateZ(-40px)" }}
+        />
+
+        {/* Nex mascot */}
+        <div className="animate-pixel-float" style={{ transform: "translateZ(30px)" }}>
+          <NexMascot variant="idle" size={128} />
         </div>
 
-        {/* Front layer — sparkle particles */}
+        {/* Orbiting elements */}
+        {/* Chain block */}
         <div
-          className="absolute top-8 right-8 animate-pixel-pulse"
+          className="absolute top-6 right-10 animate-pixel-float"
           style={{ transform: "translateZ(50px)", animationDelay: "0.5s" }}
         >
-          <div className="w-2 h-2 bg-yellow-400" />
+          <div className="w-6 h-6 bg-indigo-500 border-2 border-indigo-300 flex items-center justify-center">
+            <span className="font-pixel text-[5px] text-white">0G</span>
+          </div>
         </div>
+
+        {/* Shield */}
         <div
-          className="absolute bottom-12 left-12 animate-pixel-pulse"
+          className="absolute bottom-16 left-6 animate-pixel-float"
           style={{ transform: "translateZ(40px)", animationDelay: "1s" }}
         >
-          <div className="w-1.5 h-1.5 bg-green-400" />
+          <div className="w-5 h-6 bg-yellow-500 border-2 border-yellow-300" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }} />
         </div>
+
+        {/* Gear */}
         <div
-          className="absolute top-16 left-6 animate-pixel-pulse"
-          style={{ transform: "translateZ(35px)", animationDelay: "1.5s" }}
+          className="absolute top-16 left-4 animate-pixel-spin"
+          style={{ transform: "translateZ(35px)", animationDuration: "10s" }}
         >
-          <div className="w-1 h-1 bg-pink-400" />
+          <div className="w-5 h-5 bg-pink-500 border-2 border-pink-300" />
         </div>
-      </div>
 
-      {/* Floating shield — left */}
-      <div
-        className="absolute top-20 -left-4 transition-transform duration-300 ease-out"
-        style={{
-          transformStyle: "preserve-3d",
-          transform: `rotateX(${rotation.x * 0.6}deg) rotateY(${rotation.y * 0.6}deg) translateZ(10px)`,
-        }}
-      >
-        <div className="animate-pixel-float" style={{ animationDelay: "0.8s" }}>
-          <PixelArt grid={SHIELD_GRID} palette={SHIELD_PALETTE} pixelSize={5} />
+        {/* Sparkle particles */}
+        <div className="absolute top-4 left-20 animate-pixel-pulse" style={{ transform: "translateZ(55px)", animationDelay: "0.3s" }}>
+          <div className="w-2 h-2 bg-green-400" />
         </div>
-      </div>
-
-      {/* Floating gear — right */}
-      <div
-        className="absolute bottom-16 -right-2 transition-transform duration-300 ease-out"
-        style={{
-          transformStyle: "preserve-3d",
-          transform: `rotateX(${rotation.x * 0.4}deg) rotateY(${rotation.y * 0.4}deg) translateZ(15px)`,
-        }}
-      >
-        <div className="animate-pixel-spin" style={{ animationDuration: "12s" }}>
-          <PixelArt grid={GEAR_GRID} palette={GEAR_PALETTE} pixelSize={4} />
+        <div className="absolute bottom-8 right-16 animate-pixel-pulse" style={{ transform: "translateZ(45px)", animationDelay: "1.5s" }}>
+          <div className="w-1.5 h-1.5 bg-yellow-400" />
         </div>
-      </div>
+        <div className="absolute top-24 right-4 animate-pixel-pulse" style={{ transform: "translateZ(60px)", animationDelay: "2s" }}>
+          <div className="w-1 h-1 bg-indigo-300" />
+        </div>
 
-      {/* Floating blocks — decorative */}
-      <div
-        className="absolute top-4 right-16 transition-transform duration-300 ease-out"
-        style={{
-          transform: `rotateX(${rotation.x * 0.3}deg) rotateY(${rotation.y * 0.3}deg) translateZ(25px)`,
-        }}
-      >
-        <div className="w-4 h-4 bg-nexus-500 animate-pixel-float" style={{ animationDelay: "1.2s" }} />
-      </div>
-      <div
-        className="absolute bottom-8 left-20 transition-transform duration-300 ease-out"
-        style={{
-          transform: `rotateX(${rotation.x * 0.5}deg) rotateY(${rotation.y * 0.5}deg) translateZ(20px)`,
-        }}
-      >
-        <div className="w-3 h-3 bg-green-500 animate-pixel-float" style={{ animationDelay: "2s" }} />
+        {/* Data stream lines */}
+        <div className="absolute bottom-20 right-8" style={{ transform: "translateZ(20px)" }}>
+          <div className="space-y-1 opacity-30">
+            <div className="w-8 h-0.5 bg-indigo-400 animate-pulse" />
+            <div className="w-6 h-0.5 bg-indigo-400 animate-pulse" style={{ animationDelay: "0.2s" }} />
+            <div className="w-10 h-0.5 bg-indigo-400 animate-pulse" style={{ animationDelay: "0.4s" }} />
+          </div>
+        </div>
       </div>
     </div>
   );

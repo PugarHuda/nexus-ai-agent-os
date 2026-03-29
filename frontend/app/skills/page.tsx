@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
 import { createSkill, listSkills } from "@/lib/api";
+import NexMascot from "@/components/NexMascot";
 import { getCurrentAccount } from "@/lib/wallet";
 import { ethers } from "ethers";
 
@@ -177,12 +178,12 @@ export default function SkillsPage() {
         {/* ─── Skills Grid ───────────────────────────────── */}
         {loading ? (
           <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
-            <div className="font-pixel text-[16px] mb-3 animate-pixel-pulse">⛓️</div>
+            <NexMascot variant="think" size={48} animate />
             <p className="font-pixel text-[8px] text-gray-400">READING SKILLS FROM 0G CHAIN...</p>
           </PixelCard>
         ) : skills.length === 0 ? (
           <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
-            <div className="text-4xl mb-4">⚡</div>
+            <NexMascot variant="wave" size={64} />
             <h2 className="font-pixel text-[12px] text-white mb-2">NO SKILLS YET</h2>
             <p className="font-pixel text-[6px] text-gray-400">CREATE THE FIRST SKILL TO POPULATE THE MARKETPLACE.</p>
           </PixelCard>

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { runInference } from "@/lib/api";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
+import NexMascot from "@/components/NexMascot";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -99,7 +100,7 @@ export default function InteractPage() {
         <div className="flex-1 overflow-y-auto space-y-4 mb-4">
           {messages.length === 0 && (
             <div className="text-center py-16">
-              <div className="text-4xl mb-3">💬</div>
+              <NexMascot variant="wave" size={64} />
               <h2 className="font-pixel text-[12px] uppercase mb-2">CHAT WITH AGENT #{agentId}</h2>
               <p className="font-pixel text-[7px] text-gray-400 leading-relaxed">
                 ALL RESPONSES ARE GENERATED VIA 0G COMPUTE WITH TEEML VERIFICATION.

@@ -78,3 +78,36 @@
 .animate-pixel-pulse {
   animation: pixel-pulse 2s ease-in-out infinite;
 }
+
+/* Toast slide in */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Mobile responsive pixel font sizes */
+@media (max-width: 768px) {
+  .font-pixel {
+    letter-spacing: -0.5px;
+  }
+}
+
+/* Pixel cursor for interactive elements */
+button, a, [role="button"] {
+  cursor: pointer;
+}
+
+/* Pixel scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border: 2px solid #111827;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}

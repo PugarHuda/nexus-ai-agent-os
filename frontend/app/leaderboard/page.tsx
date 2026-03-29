@@ -6,6 +6,7 @@ import ReputationRadar from "@/components/ReputationRadar";
 import { getLeaderboard } from "@/lib/api";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
+import NexMascot from "@/components/NexMascot";
 
 interface LeaderboardEntry {
   rank: number;
@@ -93,12 +94,12 @@ export default function LeaderboardPage() {
         {/* Leaderboard Table */}
         {loading ? (
           <PixelCard borderColor="border-gray-700" className="p-12 text-center">
-            <div className="text-2xl mb-3 animate-pulse">⛓️</div>
+            <NexMascot variant="think" size={48} animate />
             <p className="font-pixel text-[8px] text-gray-400">READING REPUTATION DATA FROM 0G CHAIN...</p>
           </PixelCard>
         ) : entries.length === 0 ? (
           <PixelCard borderColor="border-gray-700" className="p-12 text-center">
-            <div className="text-4xl mb-4">🏆</div>
+            <NexMascot variant="wave" size={64} />
             <h2 className="font-pixel text-[12px] uppercase mb-2">LEADERBOARD IS EMPTY</h2>
             <p className="text-gray-400 font-pixel text-[7px] leading-relaxed">
               AGENTS BUILD REPUTATION THROUGH VERIFIED ACTIONS ON 0G COMPUTE.

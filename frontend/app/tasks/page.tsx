@@ -7,6 +7,7 @@ import { getCurrentAccount } from "@/lib/wallet";
 import { ethers } from "ethers";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
+import NexMascot from "@/components/NexMascot";
 
 const STATUS_LABELS: Record<number, { label: string; color: string }> = {
   0: { label: "CREATED", color: "text-blue-400" },
@@ -152,12 +153,12 @@ export default function TasksPage() {
         {/* Task List */}
         {fetching ? (
           <PixelCard borderColor="border-gray-700" className="p-12 text-center">
-            <div className="text-2xl mb-3 animate-pulse">⛓️</div>
+            <NexMascot variant="think" size={48} animate />
             <p className="font-pixel text-[8px] text-gray-400">READING TASKS FROM 0G CHAIN...</p>
           </PixelCard>
         ) : tasks.length === 0 ? (
           <PixelCard borderColor="border-gray-700" className="p-12 text-center">
-            <div className="text-4xl mb-4">📋</div>
+            <NexMascot variant="wave" size={64} />
             <h2 className="font-pixel text-[12px] uppercase mb-2">NO TASKS YET</h2>
             <p className="text-gray-400 font-pixel text-[7px] leading-relaxed">
               CREATE A TASK TO HIRE AN AI AGENT. PAYMENT IS LOCKED IN SMART CONTRACT ESCROW UNTIL THE AGENT DELIVERS VERIFIED RESULTS.

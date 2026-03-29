@@ -6,6 +6,7 @@ import Link from "next/link";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
 import { getStats, listAgents, listSkills } from "@/lib/api";
+import NexMascot from "@/components/NexMascot";
 
 interface DashboardStats {
   totalAgents: number;
@@ -90,7 +91,10 @@ export default function DashboardPage() {
             <h2 className="font-pixel text-[10px] text-indigo-400 mb-4">RECENT AGENTS <span className="font-pixel text-[6px] text-gray-500">(ON-CHAIN)</span></h2>
             <div className="space-y-3">
               {loading ? (
-                <p className="font-pixel text-[8px] text-gray-500 animate-pulse">LOADING FROM CHAIN...</p>
+                <div className="flex items-center gap-2">
+                  <NexMascot variant="think" size={48} animate />
+                  <p className="font-pixel text-[8px] text-gray-500">LOADING FROM CHAIN...</p>
+                </div>
               ) : recentAgents.length === 0 ? (
                 <p className="font-pixel text-[8px] text-gray-500">NO AGENTS MINTED YET</p>
               ) : (
@@ -119,7 +123,10 @@ export default function DashboardPage() {
             <h2 className="font-pixel text-[10px] text-yellow-400 mb-4">SKILLS <span className="font-pixel text-[6px] text-gray-500">(ON-CHAIN)</span></h2>
             <div className="space-y-3">
               {loading ? (
-                <p className="font-pixel text-[8px] text-gray-500 animate-pulse">LOADING FROM CHAIN...</p>
+                <div className="flex items-center gap-2">
+                  <NexMascot variant="think" size={48} animate />
+                  <p className="font-pixel text-[8px] text-gray-500">LOADING FROM CHAIN...</p>
+                </div>
               ) : recentSkills.length === 0 ? (
                 <p className="font-pixel text-[8px] text-gray-500">NO SKILLS CREATED YET</p>
               ) : (

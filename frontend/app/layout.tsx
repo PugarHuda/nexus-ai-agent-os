@@ -1,21 +1,26 @@
 import type { Metadata } from "next";
 import { Press_Start_2P } from "next/font/google";
+import { ToastProvider } from "@/components/PixelToast";
 import "./globals.css";
 
 const pixelFont = Press_Start_2P({ weight: "400", subsets: ["latin"], variable: "--font-pixel" });
 
 export const metadata: Metadata = {
   title: "Nexus — Decentralized AI Agent OS",
-  description:
-    "The operating system for AI agents on 0G. Create, compose, and monetize AI agents with on-chain reputation and verifiable inference.",
-  keywords: ["AI", "agents", "0G", "blockchain", "INFT", "ERC-7857", "decentralized"],
+  description: "The pixel-powered OS for AI agents on 0G. Create, compose, and monetize AI agents with on-chain reputation and verifiable inference.",
+  keywords: ["AI", "agents", "0G", "blockchain", "INFT", "ERC-7857", "decentralized", "pixel"],
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={pixelFont.variable}>
       <body className="bg-gray-950 text-white antialiased min-h-screen">
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

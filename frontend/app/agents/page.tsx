@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import PixelCard from "@/components/PixelCard";
 import PixelButton from "@/components/PixelButton";
 import { listAgents } from "@/lib/api";
+import NexMascot from "@/components/NexMascot";
 
 interface AgentCard {
   id: number;
@@ -67,12 +68,12 @@ export default function AgentsPage() {
         {/* Loading */}
         {loading ? (
           <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
-            <div className="font-pixel text-[16px] mb-3 animate-pixel-pulse">⛓️</div>
+            <NexMascot variant="think" size={48} animate />
             <p className="font-pixel text-[8px] text-gray-400">READING AGENTS FROM 0G CHAIN...</p>
           </PixelCard>
         ) : agents.length === 0 ? (
           <PixelCard borderColor="border-indigo-500" className="p-12 text-center pixel-shadow">
-            <div className="text-4xl mb-4">🤖</div>
+            <NexMascot variant="wave" size={64} />
             <h2 className="font-pixel text-[12px] text-white mb-2">NO AGENTS YET</h2>
             <p className="font-pixel text-[6px] text-gray-400 mb-4">
               CREATE YOUR FIRST AI AGENT TO GET STARTED. EACH AGENT GETS AN INFT
