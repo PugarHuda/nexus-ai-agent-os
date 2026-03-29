@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/index.ts"
+    }
+  ],
+  "env": {
+    "OG_RPC_URL": "https://evmrpc-testnet.0g.ai",
+    "PRIVATE_KEY": "0x04a89cfadf0e94c7fe37e5d29ce201d0ad2364d5ab352dee01f80dcde0c6ecb5",
+    "NEXUS_AGENT_CONTRACT": "0x0e8e941c363dc1C06DD0bC02395B775dE94B48a4",
+    "SKILL_REGISTRY_CONTRACT": "0xF24C4B0f45a46E2d761770BA75e147DEb738d3A6",
+    "REPUTATION_CONTRACT": "0x465291f35A3DC723B81349CBeBB296Cbf57AAAa3",
+    "ESCROW_CONTRACT": "0x66f6f49B80d4F705AB1b8Fe8E6b2cA51846EBDE8",
+    "OG_STORAGE_INDEXER": "https://indexer-storage-testnet-turbo.0g.ai"
+  }
+}
