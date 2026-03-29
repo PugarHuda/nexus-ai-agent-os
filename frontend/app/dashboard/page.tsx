@@ -59,8 +59,19 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-gray-950 text-white">
       <Navbar />
 
+      {/* Welcome Banner */}
+      <section className="max-w-7xl mx-auto px-6 pt-8 pb-4">
+        <div className="bg-gradient-to-r from-orange-950/40 to-indigo-950/40 border-2 border-orange-500/30 p-5 flex items-center gap-5 pixel-shadow">
+          <NexMascot variant="idle" size={64} animate />
+          <div>
+            <h1 className="font-pixel text-[14px] text-orange-400 mb-1">WELCOME TO NEXUS</h1>
+            <p className="font-pixel text-[7px] text-gray-400">YOUR AI AGENT COMMAND CENTER — ALL DATA LIVE FROM 0G CHAIN</p>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Grid */}
-      <section className="max-w-7xl mx-auto px-6 py-8">
+      <section className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-pixel text-[14px] text-indigo-400">PLATFORM STATS <span className="font-pixel text-[8px] text-gray-500">(ON-CHAIN)</span></h2>
           <PixelButton onClick={loadDashboard} variant="secondary">↻ REFRESH</PixelButton>
